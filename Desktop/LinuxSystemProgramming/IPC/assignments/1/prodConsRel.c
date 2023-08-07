@@ -17,7 +17,7 @@ char *msg;
 int i;
 int j;
 int shmid;
-
+//testing git
 void terminate(int sig){
 	printf(" Ctrl C received\n");
 	sem_unlink("semProd1");
