@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+//temp
 int main(){
 	int serverSocketfd;
 	int clientSocketfd;
