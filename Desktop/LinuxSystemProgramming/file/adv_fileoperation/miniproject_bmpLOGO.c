@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
 	
 
 
-//step1: 
+//step1: (Fetching frameBuffer parameters using IOCTL)
 	fbFD = open("/dev/fb0", O_RDWR);
 	
 	if(fbFD<0){
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]){
 	printf("xres : %d, yres : %d, bpp : %d\n",var_info.xres, var_info.yres, var_info.bits_per_pixel);
 
 	
-//step 2:
+//step 2:(Fetching BMP header and DIB header from BMP file)
 	
 	bmpFD = open("KM_LOGO_800x600_32.bmp",O_RDWR);
 	i = read(bmpFD, &kmLogoBMPHeader, sizeof(bmpHeader));
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]){
 		printf("Error during read");
 		exit(0);
 	}
-	//BMP Header
+	/*//BMP Header
 	printf("%hd\n", kmLogoBMPHeader.fileType);
 	printf("%d\n", kmLogoBMPHeader.sizeOfBMP);
 	printf("%hd\n", kmLogoBMPHeader.reserved1);
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]){
 	printf("%d\n", kmLogoDIBHeader.compression);
 	printf("%d\n", kmLogoDIBHeader.sizeOfRawData);
 	printf("%d\n", kmLogoDIBHeader.xres);
-	printf("%d\n", kmLogoDIBHeader.yres);
+	printf("%d\n", kmLogoDIBHeader.yres); */
 
 //step 3:(Comparing BMP resolution with framebuffer resolution)
 	if((var_info.xres <= kmLogoDIBHeader.xres) && \
@@ -120,7 +120,7 @@ int main(int argc, char *argv[]){
 	}
 		
 	
-//step 4 :
+//step 4 :(Mapping Frame buffer)
 
 	//fbSize = var_info.xres * var_info.yres * var_info.bits_per_pixel/8;
 	fbSize =(fix_info.line_length)* (var_info.yres);
@@ -132,22 +132,22 @@ int main(int argc, char *argv[]){
 	}
 	
 
-//step 5 :
+//step 5 :(Seeking to bitmap data of BMP file)
 
 	lseek(bmpFD, kmLogoBMPHeader.offset, SEEK_SET);
 	lineLength = (fix_info.line_length)/4;
 	printf("Line Length : %d \n", lineLength);
 	
-//step 6 :
+//step 6 : (Filling mapped frame buffer with BMP bitmap data)
 	
-	for(i = 0; i < kmLogoDIBHeader.height_px-1; i++){
+	for(i = kmLogoDIBHeader.height_px-1; i >=0; i--){
 		for(j = 0; j<kmLogoDIBHeader.width_px; j++){
 			if(read(bmpFD, &temp, 4)<0){
 				printf("Error during read from bmpFD");
 				exit(0);
 			}
 			
-		//	fb_ptr[i * lineLength + j] = (temp);
+			fb_ptr[i * lineLength + j] = (temp);
 		}
 	}
 	

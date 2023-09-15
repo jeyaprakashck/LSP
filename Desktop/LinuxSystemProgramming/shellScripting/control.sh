@@ -38,12 +38,29 @@
 #	echo \$var1 : $i
 #done
 
+#for a in $(ls */ -d)
+#do
+#	echo $a
+#done
+
+counter(){
+    for file in "$1"/* 
+    do 
+    if [ -d "$file" ]
+    then 
+            echo "$file"
+            counter "$file"
+    fi
+    done
+}
+
+counter "$1"
 
 i=1
 k=5
 while [ $k -ge $i ]
 do
-	echo $i
+	#echo $i
 	i=$(expr $i + 1)
 done
 
